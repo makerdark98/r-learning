@@ -1,6 +1,8 @@
 ---
 title: "R 문법 연습"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
  * 문법 참고 사이트 : [https://moon9342.github.io/R-lecture-R-environment](https://moon9342.github.io/R-lecture-R-environment)
@@ -364,5 +366,438 @@ setequal(var2, var3)
 var1 = vector(mode="numeric", length=10)
 var1
 ```
+
+---
+
+## Chapter 6. Matrix
+
+```{r}
+var1 = matrix(c(1:5))
+var1
+
+var2 = matrix(c(1:10), nrow=2)
+var2
+
+var3 = matrix(c(1:13), nrow=3)
+var3
+
+var4 = matrix(c(1:10), nrow=2, byrow=T)
+var4
+
+var5 = c(1, 2, 3, 4)
+var6 = c(5, 6, 7, 8)
+mat1 = rbind(var5, var6)
+mat1
+
+mode(mat1)
+class(mat1)
+```
+
+### How to access elements of matrix
+ * `variable_name[row_idx, col_idx]`
+ * specific row : `variable_name[row_idx, ]`
+ * specific col : `variable_name[, col_idx]`
+ 
+```{r}
+var1 = matrix(1:21, nrow=3, ncol=7)
+var1
+
+var1[2, 2]
+var1[2,]
+var1[,3]
+
+var1[c(1,3), c(5:7)]
+
+length(var1)
+nrow(var1)
+ncol(var1)
+
+apply(X=var1, MARGIN=1, FUN=max)
+apply(X=var1, MARGIN=2, FUN=min)
+```
+
+### How to operate with matrix.
+
+```{r}
+var1 = matrix(c(1:6), ncol=3)
+var1
+
+var2 = matrix(c(1, -1, 2, -2, 1, -1), ncol=3)
+var2
+
+var1 * var2 # elementwise product
+
+t(var1)
+
+var3 = matrix(c(1, -1, 2, -2, 1, -1), ncol=2)
+var3
+
+var1 %*% var3 # matrix product
+
+var1 = matrix(c(1,2,3,3,0,1,5,4,2), ncol=3)
+var1
+
+solve(var1) # matrix inversion
+```
+
+
+### R array
+ * Array is a type of multiple array with the same type.
+
+```{r}
+var1 = array(c(1:24), dim=c(3, 2, 4))
+var1
+```
+
+---
+
+## R factor
+ * `factor` is a type for categorical data.
+ * The list of `factor`'s values is called `level`
+
+### Properties of `factor`
+ * The arguments is generally `vector`.
+ * `levels` is a `vector` of `character`s.
+ * `ordered` is a `logical` type values. `T` means `ordered data`, `F` means `unordered data`.
+ 
+
+```{r}
+var1 = c("A", "O", "AB", "B", "A", "O", "A")
+var1
+var1_factor = factor(var1)
+var1_factor
+
+nlevels(var1_factor)
+levels(var1_factor)
+is.factor(var1_factor)
+
+ordered(var1)
+
+var1_factor = factor(var1, levels = c("O", "A", "B"), ordered = T)
+var1_factor
+var1_factor = factor(var1, levels = c("O", "A", "B", "AB"), ordered = T)
+var1_factor
+
+levels(var1_factor) = c("A형", "AB형", "B형", "O형")
+levels(var1_factor)
+var1_factor
+```
+
+### Practice
+```{r}
+gender = c("MAN", "WOMAN", "MAN", "MAN", "WOMAN")
+gender
+
+factor_gender = as.factor(gender)
+factor_gender
+
+table(factor_gender)
+
+plot(factor_gender)
+```
+
+
+## R list
+```{r}
+var_scalar = 100
+var_scalar
+
+var_vector = c(10, 20, 30)
+var_vector
+
+var_matrix = matrix(1:4, nrow = 2, ncol = 2)
+var_matrix
+
+var_array = array(1:8, dim=c(2, 2, 2))
+var_array
+
+var_df = data.frame(id=1:3, age=c(10, 15, 20))
+var_df
+
+var_factor = factor(c("A", "B", "C", "A", "B", "A"))
+var_factor
+
+my_list = list(var_scalar, var_vector, var_matrix, var_array, var_df, var_factor)
+my_list
+```
+
+## R dataframe
+ * `Data Frame` is similar to a table.
+ * It can store different type data per column.
+ * It is an composition of `list` and `vector`. Column is `list`. The data of columns are `Vector`
+
+### Practice
+```{r}
+no = c(1, 2, 3)
+name = c("HONG", "CHOI", "KIM")
+pay = c(250, 150, 300)
+
+df = data.frame(NO=no, Name=name, Pay=pay)
+
+df
+
+mat1 = matrix(data = c(1, "HONG", 150, 2, "CHOI", 150, 3, "KIM", 300), nrow = 3, by= T)
+
+mat1
+
+memp = data.frame(mat1)
+memp
+
+df = data.frame(x=c(1: 5), y=seq(2, 10, 2), z=c("a", "b", "c", "d", "e"))
+df
+
+df$x
+
+```
+
+
+### Functions of Data Frame
+ * `str()` is a function that displays the structure of dataframe.
+ * `summary()` is a function, which displays simple statistical values of the argument.
+ * The prototype of `apply()` is `apply(df, row or col, function)`.
+   * It applies the function to each row or col.
+ * The prototype of `subset()` is `subset(df, condition)`.
+   * It fetches another dataframe with data satisfied the condition.
+
+```{r}
+df = data.frame(x=c(1:5), y=seq(2,10,2), z= c("a", "b", "c", "d", "e"))
+str(df)
+
+df = data.frame(x = c(1:5), y= seq(2, 10, 2), z= c("a", "b", "c", "d", "e"), stringAsFactors = F)
+
+df
+str(df)
+
+summary(df)
+
+df = data.frame(x=c(1:5), y=seq(2,10,2), z= c("a", "b", "c", "d", "e"))
+apply(df[, c(1, 2)], 2, sum)
+
+df = data.frame(x=c(1:5), y=seq(2,10,2), z= c("a", "b", "c", "d", "e"))
+sub1 <- subset(df, x >= 3)
+sub1
+
+sub2 <- subset(df, x >=3 & y <= 8)
+sub2
+```
+
+---
+
+## chatper9. how to process characters.
+
+ * `stringr` is a package that contains functions of string.
+ 
+```{r}
+install.packages('stringr')
+library('stringr')
+
+myStr <- "Hongkd1051Leess1002YOU25Kim2004"
+str_length(myStr)
+str_locate(myStr, "Kim")
+
+str_sub(myStr, 1, str_length(myStr) - 7)
+str_to_upper(myStr)
+str_to_lower(myStr)
+
+myStr <- "Hongkd1051,Leess1002,You25,Kim2004"
+str_replace(myStr, "Hong", "CHOI")
+str_c(myStr, ",Park2021")
+str_split(myStr, ",")
+
+str1 <- c("HONG", "KIM", "LEE", "KANG")
+paste(str1, collapse=",")
+```
+ 
+
+### Regular expression
+```{r}
+myId <- "991919-1234567"
+str_extract_all(myId, "[0-9]{6}-[1234][0-9]{6}")
+```
+
+
+---
+
+## Data I/O
+### Keyboard I/O
+ * `scan()`, `edit()`
+```{r}
+myNum = scan()
+myNum
+
+myStr = scan(what=character())
+myStr
+
+df = data.frame();
+my_df = edit(df)
+```
+
+### Local File I/O
+ * Read data
+    * `read.table()`
+    * `read.csv()`
+    * `read.xlsx()`
+ * Write Data
+    * `write.table()`
+    * `cat()`
+    * `capture.output()`
+    
+ 
+---
+ 
+## Control statement
+```{r}
+var1 = 30
+var2 = 40
+if (var1 > var2) {
+   cat(var1)
+} else {
+   cat(var2)
+}
+
+ifelse(var1 > var2, var1, var2)
+
+emp_name = "HOMG"
+switch(emp_name, "HONG"=30, "KIM"=40, "CHOI"=50)
+
+name = c("CHOI", "KANG", "LEE")
+which (name == "KANG")
+which (name != "KANG")
+which (name == "SIN")
+
+for (n in seq(1, 5)) {
+   print(n)
+}
+
+idx = 1
+sum = 0
+while (idx <= 10) {
+   sum = sum + idx
+   idx = idx + 1
+}
+
+cat(sum)
+
+
+myFunc = function(k) {
+   return (k + 100)
+}
+
+result = myFunc(100)
+result
+```
+ 
+ 
+---
+
+## Exercise
+```{r}
+#data : 2 3 5 6 7 10
+# 데이터 벡터 x를 만드세요
+x = c(2, 3, 5, 6, 7, 10)
+print(x)
+# 각 데이터의 제곱으로 구성된 벡터 x2를 만드세요
+x2 = x * x
+print(x2)
+# 각 데이터의 제곱의 합을 구하세요
+print(sum(x * x))
+# 각 데이터에서 2를 뺀 값을 구하세요
+print(x - 2)
+# 최대값과 최소값을 구하세요
+print(max(x))
+print(min(x))
+# 5보다 큰 값들로만 구성된 데이터 벡터 x_up을 만드세요
+x_up = x[x>5]
+print(x_up)
+# 벡터 x의 길이를 구하세요
+length(x)
+```
+```{r}
+# UsingR 패키지를 인스톨한 후 내장되어 있는 데이터셋 primes를 이용하여,
+install.packages("primes")
+library("primes")
+```
+
+```{r}
+# primes 데이터 셋을 로드하세요
+# 처음 6개만 출력
+head(primes, 6)
+# 1부터 2003까지 몇개의 소수가 존재하는가?
+length(primes[primes >= 1 & primes <= 2003])
+# 1 부터 200까지 몇개의 소수가 존재하는가?
+length(primes[primes >= 1 & primes <= 200])
+# 평균은 얼마인가?
+mean(primes)
+# 1000 이상의 소수는 몇개인가?
+length(primes[primes >= 1000])
+# 500 부터 1000 사이 소수만을 포함한 벡터 pp를 만드세요
+pp = primes[primes >= 500 & primes <= 1000]
+print(pp)
+```
+# 벡터를 입력받아 그 원소의 값을 모두 더해서 결과를 반환하는 mysum함수를 작성하세요
+```{r}
+mySum = function (v) {
+   retval = 0
+   for (e in v) {
+      retval = retval + e
+   }
+   return (retval)
+}
+
+mySum(c(1:6))
+```
+
+```{r}
+# 다음과 같은 형태의 데이터를 이용하여 다음의 문제를 해결하세요
+# x =
+# [ 1, 5, 9,
+#   2, 6, 10,
+#   3, 7, 11,
+#   4, 8, 12 ]
+
+var1 = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12)
+# 행렬(matrix) x를 만드시오.
+x = matrix(var1, ncol=3, byrow = T)
+print(x)
+# x의 전치행렬 xt를 만드시오.
+t(x)
+# x의 첫번째 행(row)만 뽑아낸 xr1을 만드시오
+xr1 = x[1,]
+print(xr1)
+# x의 세번째 열(col)만 뽑아낸 xc3을 만드시오
+xc3 = x[,3]
+print(xc3)
+# x에서 6,7,10,11을 원소로 가지는 부분행렬 xs를 만드시오
+xs = x[2:3, 2:3]
+print(xs)
+# x의 두번째 열(col)의 원소가 홀수인 행(row)들만 뽑아서 부분행렬 xs2를 만드시오
+xs2 = x[x[,2] %% 2 ==1,]
+print(xs2)
+# matrix x의 각 행(row)의 평균을 구하시오
+apply(x, MARGIN=1, mean)
+# matrix x의 각 열(col)의 평균을 구하시오
+apply(x, MARGIN=2, mean)
+```
+
+```{r}
+# DMwR라는 패키지를 설치후, 패키지에 포함된 데이터셋인 algae를 로딩하시오. 
+install.packages("DMwR")
+library("DMwR")
+```
+
+``` {r}
+DMwR::algae
+```
+```{r}
+# algae의 속성 중 NH4 의 값들에 대해,
+NH4 = DMwR::algae[,"NH4"]
+# NA(결측치)가 몇개인지 구하시오
+length(NH4)
+sum(is.na(NH4))
+# 결측치를 제거하고 평균을 구하시오.
+mean(NH4[!is.na(NH4)])
+```
+
+
 
 
